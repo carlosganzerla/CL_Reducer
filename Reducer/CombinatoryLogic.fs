@@ -9,7 +9,7 @@ type CLTerm =
 
 let identity x = Var x
 
-let always x = fun () -> x
+let always x () = x
 
 let private mapTerm fS fK fI fVar fTerm term =
     let rec loop accumulator = function
@@ -21,8 +21,7 @@ let private mapTerm fS fK fI fVar fTerm term =
         | [] -> accumulator |> List.rev
     loop [] term
 
-let mapInnerTerms =  mapTerm (always S) (always K) (always I) identity
-
+let private mapInnerTerms =  mapTerm (always S) (always K) (always I) identity
 
 let rec private clean term =
     let cleanAtoms term =  
@@ -43,11 +42,11 @@ let contract term =
     | _ when cleaned <> term -> Some cleaned
     | _ ->  None
 
-let rec toWeakNf term =
+let rec reduce term =
     let contracted = contract term
     match contracted with
-    | Some contraction -> toWeakNf contraction
-    | None ->  term |> mapInnerTerms (Term << toWeakNf) |> clean
+    | Some contractedTerm -> reduce contractedTerm
+    | None ->  term |> mapInnerTerms (Term << reduce) |> clean
 
 let rec toString term =
     let fS () = "S"
@@ -57,3 +56,14 @@ let rec toString term =
     let fTerm term =  $"({toString term})"
     term |> mapTerm fS fk fI fVar fTerm |> System.String.Concat
 
+
+//HOW TO SOLVE INFINITE REDUCTION PROBLEM
+//A reduction is infinite iff for any reduction Xi of X1, where Xi is not the
+// terminus, Xi === X1
+//PROPOSED SOLUTION:
+//Implement better redex system, using the triplet. 
+//Contract by the leftmost maximal redex. If the previous redex is of the
+// form SXYZ, contract the leftmost maximal redex in (YZ).
+//Always contract by the Leftmost maximal redex (see definition on book if
+//required). If the leftmost reduction is infinite, then any reduction is
+//infinite.
