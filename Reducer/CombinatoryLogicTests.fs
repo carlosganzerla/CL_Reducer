@@ -59,7 +59,7 @@ let ``Normal forms are found correctly`` () =
         [Var 'x'; Term [Var 'y'; Var 'z']; Term [Var 'z'; Term [Var 'y'; Var 'z']]];
         [Var 'x'; Var 'y'];
     ] 
-    terms |> List.map (parseString >> toWeakNf) |> should equal expected
+    terms |> List.map (parseString >> reduce) |> should equal expected
     
 [<Fact>]
 let ``Terms are converted to string correctly`` () = 

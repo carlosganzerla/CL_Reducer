@@ -6,7 +6,7 @@ open System
 open Parser
 open CombinatoryLogic
 
-let run = (Console.ReadLine >> parseString >> toWeakNf >> toString 
+let run = (Console.ReadLine >> parseString >> reduce >> toString 
     >> printfn "Weak NF: %s") 
 
 [<EntryPoint>]
