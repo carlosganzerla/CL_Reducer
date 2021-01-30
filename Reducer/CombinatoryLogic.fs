@@ -59,11 +59,16 @@ let rec toString term =
 
 //HOW TO SOLVE INFINITE REDUCTION PROBLEM
 //A reduction is infinite iff for any reduction Xi of X1, where Xi is not the
-// terminus, Xi === X1
-//PROPOSED SOLUTION:
+// terminus, Xi === X1 (easy to prove)
+//PROPOSED SOLUTION #1:
 //Implement better redex system, using the triplet. 
-//Contract by the leftmost maximal redex. If the previous redex is of the
-// form SXYZ, contract the leftmost maximal redex in (YZ).
-//Always contract by the Leftmost maximal redex (see definition on book if
-//required). If the leftmost reduction is infinite, then any reduction is
-//infinite.
+//Contract by the leftmost redex (no need to be maximal). if redex is
+// SXYZ then the following contraction must be in (YZ).
+
+//PROPOSED SOLUTION #2:
+//STEPS THRESHOLD.
+//This solution seems more promising.
+// First, show steps. (Just append to some fking list)
+//Create a threshold based on term length (occurrences of atoms)
+//i.e. 1000*length.
+//It's not much, but it can cover most cases.
