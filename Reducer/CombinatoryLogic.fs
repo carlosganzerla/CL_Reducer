@@ -23,30 +23,13 @@ let private mapTerm fS fK fI fVar fTerm term =
 
 let private mapInnerTerms =  mapTerm (always S) (always K) (always I) identity
 
-let rec private clean term =
-    let cleanAtoms term =  
-        let trimmed = clean term
-        match trimmed with
-        | [ atom ] -> atom
-        | _ -> Term (clean term)
+let rec contract term =
     match term with
-    | Term term::tail -> clean (term @ tail)
-    | _ -> mapInnerTerms cleanAtoms term
-
-let contract term =
-    let cleaned = clean term
-    match cleaned with
+    | Term term::tail -> contract (term @ tail)
     | S::x::y::z::tail -> Some (x::z::(Term [ y; z; ])::tail)
     | I::x::tail
     | K::x::_::tail -> Some (x::tail)
-    | _ when cleaned <> term -> Some cleaned
     | _ ->  None
-
-let rec reduce term =
-    let contracted = contract term
-    match contracted with
-    | Some contractedTerm -> reduce contractedTerm
-    | None ->  term |> mapInnerTerms (Term << reduce) |> clean
 
 let rec toString term =
     let fS () = "S"
@@ -56,19 +39,18 @@ let rec toString term =
     let fTerm term =  $"({toString term})"
     term |> mapTerm fS fk fI fVar fTerm |> System.String.Concat
 
+let rec length term = 
+    let fAtom _ = 1
+    term |> mapTerm fAtom fAtom fAtom fAtom length |> List.reduce (+)
 
-//HOW TO SOLVE INFINITE REDUCTION PROBLEM
-//A reduction is infinite iff for any reduction Xi of X1, where Xi is not the
-// terminus, Xi === X1 (easy to prove)
-//PROPOSED SOLUTION #1:
-//Implement better redex system, using the triplet. 
-//Contract by the leftmost redex (no need to be maximal). if redex is
-// SXYZ then the following contraction must be in (YZ).
-
-//PROPOSED SOLUTION #2:
-//STEPS THRESHOLD.
-//This solution seems more promising.
-// First, show steps. (Just append to some fking list)
-//Create a threshold based on term length (occurrences of atoms)
-//i.e. 1000*length.
-//It's not much, but it can cover most cases.
+let reduce term =
+    let maxIterations = term |>  length |> (*) 1000
+    let rec reduce iterations term =
+        if iterations > maxIterations then
+            failwithf "Could not reach the terminus after %d iterations. 
+            Term most likely does not have a weak normal form." maxIterations
+        else
+            match contract term with
+            | Some contracted -> reduce (iterations + 1) contracted
+            | None -> term |> mapInnerTerms (Term << reduce iterations) 
+    reduce 0 term

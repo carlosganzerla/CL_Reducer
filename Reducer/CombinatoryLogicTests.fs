@@ -5,7 +5,7 @@ open Xunit
 
 open CombinatoryLogic
 open Parser
-
+open ParserTests
 
 [<Fact>]
 let ``S redex contracts correctly`` () =
@@ -20,7 +20,8 @@ let ``S redex should not contract if there are terms missing`` () =
         [ S; Var 'c' ];
         [ S; Var 'a'; Var 'b'; ];
     ]
-    attempts |> List.fold (fun x att -> x && (contract att = None)) true |> should equal true
+    attempts |> List.fold (fun x att -> x && (contract att = None)) true 
+             |> should equal true
 
 [<Fact>]
 let ``I redex contracts correctly`` () =
@@ -39,9 +40,9 @@ let ``K redex does not contract when one term is missing`` () =
     [ K; Var 'a' ] |> contract |> should equal None
 
 [<Fact>]
-let ``Contrction removes redundant terms`` () =
-    [ Term [ Term [ Var 'a' ]; Term [ Term [Var 'b'; Var 'c'; ]; Var 'd'; ] ] ] 
-    |> contract |> should equal (Some [ Var 'a'; Term [ Var 'b'; Var 'c'; Var 'd'; ] ])
+let ``Contraction flattens leftmost terms`` () =
+    [ Term [ I; Var 'a' ]; Term [ Var 'b'; Var 'c'; ]; Var 'd'; ]
+    |> contract |> should equal (Some [ Var 'a'; Term [ Var 'b'; Var 'c'; ]; Var 'd'; ])
  
 [<Fact>]
 let ``Normal forms are found correctly`` () =
@@ -54,10 +55,10 @@ let ``Normal forms are found correctly`` () =
     ]
     let expected = [
         [Var 'x'; Term [K; Var 'x']];
-        [Var 'x'; Var 'y'; Var 'x'];
-        [Var 'x'; Var 'y'];
+        [Var 'x'; Var 'y'; Term [ Var 'x' ] ];
+        [ Term [ Var 'x'; Var 'y' ]];
         [Var 'x'; Term [Var 'y'; Var 'z']; Term [Var 'z'; Term [Var 'y'; Var 'z']]];
-        [Var 'x'; Var 'y'];
+        [ Term [ Var 'x'; Var 'y' ] ];
     ] 
     terms |> List.map (parseString >> reduce) |> should equal expected
     
@@ -74,3 +75,25 @@ let ``Terms are converted to string correctly`` () =
         "(((xy))K)";
     ] 
     terms |> List.map toString |> should equal expected
+
+[<Fact>]
+let ``Term lengths are calcualted correctly`` () = 
+    let terms = [
+        [ S; Term [ K; Var 'x'; Var 'z'; Term [ S; I; K ]; Var 'x' ]; ];
+        [ S; I; K; Var 'x'];
+        [ Term [ Term [ Term [ Var 'x'; Var 'y'; ] ]; K ] ];
+        [ S; I; I; Term [ S; I; I; ] ];
+    ]
+    let expected = [
+        8;
+        4;
+        3;
+        6;
+    ] 
+    terms |> List.map length |> should equal expected
+
+// [<Fact>]
+// let ``Term without normal form throws error eventually`` () = 
+//     let term = [ S; I; I; Term [ S; I; I; ] ]
+//     term |> (mustThrow reduce)
+    
