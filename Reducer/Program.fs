@@ -6,8 +6,14 @@ open System
 open Parser
 open CombinatoryLogic
 
-let run = (Console.ReadLine >> parseString >> reduce >> toString 
-    >> printfn "Weak NF: %s") 
+let parseAndReduce = Console.ReadLine >> parseString >> reduce >> toString  
+
+let run () = 
+    try
+        () |> Console.ReadLine |> parseString |> reduce |> toString 
+           |> printfn "Weak normal form: %s"
+    with
+        | ex -> printfn "Error: %s" ex.Message
 
 [<EntryPoint>]
 let rec main argv =

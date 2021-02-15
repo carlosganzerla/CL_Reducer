@@ -43,14 +43,19 @@ let rec length term =
     let fAtom _ = 1
     term |> mapTerm fAtom fAtom fAtom fAtom length |> List.reduce (+)
 
+let private extract = function
+    | Ok ok -> ok
+    | Error err -> failwith err
+
 let reduce term =
     let maxIterations = term |>  length |> (*) 1000
-    let rec reduce iterations term =
-        if iterations > maxIterations then
+    let rec reduce i term =
+        if i >= maxIterations then
             failwithf "Could not reach the terminus after %d iterations. 
-            Term most likely does not have a weak normal form." maxIterations
+            Term most likely does not have a weak normal form." i
         else
             match contract term with
-            | Some contracted -> reduce (iterations + 1) contracted
-            | None -> term |> mapInnerTerms (Term << reduce iterations) 
+            | Some contracted -> reduce (i + 1) contracted
+            | None -> term |> mapInnerTerms (Term << reduce i) 
     reduce 0 term
+ 

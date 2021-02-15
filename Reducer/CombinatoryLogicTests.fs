@@ -12,7 +12,6 @@ let ``S redex contracts correctly`` () =
     [ S; Var 'a'; Var 'b'; Var 'c'; Var 'd' ] |> contract 
     |> should equal (Some [ Var 'a'; Var 'c'; Term [ Var 'b'; Var 'c' ]; Var 'd'])
 
-
 [<Fact>]
 let ``S redex should not contract if there are terms missing`` () =
     let attempts = [
@@ -61,7 +60,7 @@ let ``Normal forms are found correctly`` () =
         [ Term [ Var 'x'; Var 'y' ] ];
     ] 
     terms |> List.map (parseString >> reduce) |> should equal expected
-    
+
 [<Fact>]
 let ``Terms are converted to string correctly`` () = 
     let terms = [
@@ -92,8 +91,10 @@ let ``Term lengths are calcualted correctly`` () =
     ] 
     terms |> List.map length |> should equal expected
 
-// [<Fact>]
-// let ``Term without normal form throws error eventually`` () = 
-//     let term = [ S; I; I; Term [ S; I; I; ] ]
-//     term |> (mustThrow reduce)
+[<Fact>]
+let ``Term without normal form throws error eventually`` () = 
+    let term = [ S; I; I; Term [ S; I; I; ] ]
+    term |> mustThrow reduce
+
+  
     
