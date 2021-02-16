@@ -1,4 +1,3 @@
-// Learn more about F# at http://docs.microsoft.com/dotnet/fsharp
 
 module Program
 
@@ -6,18 +5,19 @@ open System
 open Parser
 open CombinatoryLogic
 
-let parseAndReduce = Console.ReadLine >> parseString >> reduce >> toString  
+let parseAndReduce = parseString >> reduce >> toString
 
-let run () = 
+let rec run () =
     try
-        () |> Console.ReadLine |> parseString |> reduce |> toString 
-           |> printfn "Weak normal form: %s"
+            Console.WriteLine "Enter expression:"
+            |> Console.ReadLine
+            |> parseAndReduce
+            |> printfn "Weak normal form: %s"
+            |> run
     with
-        | ex -> printfn "Error: %s" ex.Message
+        | ex -> printfn "Error: %s" ex.Message |> run
 
 [<EntryPoint>]
-let rec main argv =
-    Console.WriteLine "Enter expression:"
+let main argv =
     run ()
-    main argv |> ignore
     0 // return an integer exit code

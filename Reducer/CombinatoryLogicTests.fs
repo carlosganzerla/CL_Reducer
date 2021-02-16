@@ -9,7 +9,7 @@ open ParserTests
 
 [<Fact>]
 let ``S redex contracts correctly`` () =
-    [ S; Var 'a'; Var 'b'; Var 'c'; Var 'd' ] |> contract 
+    [ S; Var 'a'; Var 'b'; Var 'c'; Var 'd' ] |> contract
     |> should equal (Some [ Var 'a'; Var 'c'; Term [ Var 'b'; Var 'c' ]; Var 'd'])
 
 [<Fact>]
@@ -19,7 +19,7 @@ let ``S redex should not contract if there are terms missing`` () =
         [ S; Var 'c' ];
         [ S; Var 'a'; Var 'b'; ];
     ]
-    attempts |> List.fold (fun x att -> x && (contract att = None)) true 
+    attempts |> List.fold (fun x att -> x && (contract att = None)) true
              |> should equal true
 
 [<Fact>]
@@ -42,7 +42,7 @@ let ``K redex does not contract when one term is missing`` () =
 let ``Contraction flattens leftmost terms`` () =
     [ Term [ I; Var 'a' ]; Term [ Var 'b'; Var 'c'; ]; Var 'd'; ]
     |> contract |> should equal (Some [ Var 'a'; Term [ Var 'b'; Var 'c'; ]; Var 'd'; ])
- 
+
 [<Fact>]
 let ``Normal forms are found correctly`` () =
     let terms = [
@@ -58,11 +58,11 @@ let ``Normal forms are found correctly`` () =
         [ Term [ Var 'x'; Var 'y' ]];
         [Var 'x'; Term [Var 'y'; Var 'z']; Term [Var 'z'; Term [Var 'y'; Var 'z']]];
         [ Term [ Var 'x'; Var 'y' ] ];
-    ] 
+    ]
     terms |> List.map (parseString >> reduce) |> should equal expected
 
 [<Fact>]
-let ``Terms are converted to string correctly`` () = 
+let ``Terms are converted to string correctly`` () =
     let terms = [
         [ S; Term [ K; Var 'x'; Var 'z'; Term [ S; I; K ]; Var 'x' ]; ]
         [ S; I; K; Var 'x']
@@ -72,11 +72,11 @@ let ``Terms are converted to string correctly`` () =
         "S(Kxz(SIK)x)";
         "SIKx";
         "(((xy))K)";
-    ] 
+    ]
     terms |> List.map toString |> should equal expected
 
 [<Fact>]
-let ``Term lengths are calcualted correctly`` () = 
+let ``Term lengths are calcualted correctly`` () =
     let terms = [
         [ S; Term [ K; Var 'x'; Var 'z'; Term [ S; I; K ]; Var 'x' ]; ];
         [ S; I; K; Var 'x'];
@@ -88,13 +88,12 @@ let ``Term lengths are calcualted correctly`` () =
         4;
         3;
         6;
-    ] 
+    ]
     terms |> List.map length |> should equal expected
 
 [<Fact>]
-let ``Term without normal form throws error eventually`` () = 
+let ``Term without normal form throws error eventually`` () =
     let term = [ S; I; I; Term [ S; I; I; ] ]
     term |> mustThrow reduce
 
-  
-    
+

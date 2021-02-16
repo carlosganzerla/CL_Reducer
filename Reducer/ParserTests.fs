@@ -13,7 +13,7 @@ let mustThrow func arg =
         Assert.True(false)
     with
     | :? Sdk.TrueException ->
-        failwith "The test did not throw an exception, but should have."   
+        failwith "The test did not throw an exception, but should have."
     | _ -> ()
 
 [<Fact>]
@@ -30,7 +30,7 @@ let ``Parsing 'I' must return combinator I`` () =
 
 [<Fact>]
 let ``Parsing alphabetic chars should return Vars`` () =
-    let vars = "ABCDEFGHJLMNOPQRTUVWXYabcdefghijklmnopqrstuvwxyz" 
+    let vars = "ABCDEFGHJLMNOPQRTUVWXYabcdefghijklmnopqrstuvwxyz"
     let expected = vars |> Seq.map Var |> Seq.toList
     vars |> parseString |>  should equal expected
 
@@ -50,7 +50,7 @@ let ``Parsing a string with parens creates terms`` () =
         "(((a)))";
         "a((bc)de)";
         "((a)b)c";
-    ] 
+    ]
     let expected = [
         [ Term [ Var 'a'; Var 'b'; Var 'c'; ] ];
         [ Term [ Term [ Term [ Var 'a' ] ] ] ];
@@ -62,12 +62,12 @@ let ``Parsing a string with parens creates terms`` () =
 
 [<Fact>]
 let ``Parsing large term must yield correct result`` () =
-    "KSIabc(de(fg)h)" |> parseString |> should equal [ 
-        K; 
+    "KSIabc(de(fg)h)" |> parseString |> should equal [
+        K;
         S;
-        I; 
+        I;
         Var 'a';
-        Var 'b'; 
+        Var 'b';
         Var 'c';
         Term [ Var 'd'; Var 'e'; Term [ Var 'f'; Var 'g' ]; Var 'h' ]
     ]
