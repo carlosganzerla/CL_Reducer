@@ -25,6 +25,7 @@ To build and run as a standalone .exe:
 
 To test:
 ```bash
+    cd ~/../yourstuff/Reducer/ReducerTests
     dotnet test
 ```
 
