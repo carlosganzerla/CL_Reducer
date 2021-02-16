@@ -51,7 +51,7 @@ let reduce term =
     let maxIterations = term |>  length |> (*) 1000
     let rec reduce i term =
         if i >= maxIterations then
-            failwithf "Could not reach the terminus after %d iterations. Term most likely does not have a weak normal form." i
+            failwithf @"Could not reach the terminus after %d iterations. Term most likely does not have a weak normal form." i
         else
             match contract term with
             | Some contracted -> reduce (i + 1) contracted
