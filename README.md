@@ -37,6 +37,6 @@ the correct non-leftmost reductions for every irreducible term.
 
 ## See also
 [Lambda-Calculus and Combinators - An
-Introduction](https://www.cin.ufpe.br/~djo/files/Lambda-Calculus%20and%20Combinators.pdf)
+Introduction](https://www.amazon.com/Lambda-Calculus-Combinators-Introduction-Roger-Hindley/dp/0521898854)
 
 
