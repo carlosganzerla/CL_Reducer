@@ -4,7 +4,7 @@ interactively in the console. It parses user input to combinatory logic terms
 and performs a series of contractions to find the weak normal form, printing the
 response on the screen. If a term has no weak normal form, it displays an error
 message. If the input is incorrect or invalid, an error message is also
-displayed.in
+displayed.
 
 ## How to use it
 Install [.NET](). Then, just navigate to the project directory:
